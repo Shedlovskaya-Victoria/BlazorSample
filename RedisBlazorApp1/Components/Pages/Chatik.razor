@@ -1,0 +1,72 @@
+﻿@page "/chatik"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Components.Web
+@using RedisBlazorApp1.Components
+@using StackExchange.Redis
+@inject Service.Chatik chatik;
+<style>
+    td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+    }
+
+    button {
+    padding: 8px;
+    margin: 5px;
+    outline-color: yellowgreen:
+    }
+</style>
+
+<PageTitle>Chatik</PageTitle>
+<h1>Мой чатик!!!!!!!</h1>
+
+<table cellpadding="2" width="640px" border="1">
+    <tr>
+        <th>Message</th>
+    </tr>
+    @if (forecasts != null)
+    {
+        @foreach (var item in forecasts)
+        {
+            <tr>
+                <td>
+                    @item;
+                </td>
+            </tr>
+        }
+    }
+
+</table>
+
+<div>
+    <InputText @bind-Value="textBox" />
+</div>
+<div>
+    <button @onclick="OnClickUpdate"> Update </button>
+    <button @onclick="OnClickSend"> Send </button>
+</div>
+
+@code {
+    private string textBox;
+    private List<string> forecasts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        textBox = "";
+        chatik.OnNewMessage += (x, y) => OnClickUpdate();
+    }
+
+    protected void OnClickUpdate()
+    {
+       forecasts =  chatik.GetMessages();
+    }
+
+    protected void OnClickSend()
+    {
+        chatik.SendMessage(textBox);
+        textBox = "";
+    }
+
+}
+
