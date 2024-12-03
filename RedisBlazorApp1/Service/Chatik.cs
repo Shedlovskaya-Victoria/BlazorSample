@@ -1,35 +1,20 @@
 ﻿using StackExchange.Redis;
 using Microsoft.AspNetCore.Components.Web;
 using RedisBlazorApp1.Components.Pages;
+using System.Threading.Channels;
+using Microsoft.AspNetCore.SignalR;
 
 
 namespace RedisBlazorApp1.Service
 {
-    public class Chatik
+    public class Chatik : EventArgs
     {
         private bool inited;
         private static ConnectionMultiplexer redis;
         private static ISubscriber subscriber;
         private List<string> messages;
 
-        public delegate void MessagesHadler(string message);
-        MessagesHadler? hadler;
-
-        public event MessagesHadler handler
-        {
-            add
-            {
-                hadler += value;
-                Console.WriteLine($"{value.Method.Name} добавлен");
-            }
-            remove
-            {
-                hadler -= value;
-                Console.WriteLine($"{value.Method.Name} удален");
-            }
-        }
-
-        public event EventHandler OnNewMessage;
+        public event EventHandler Handler;
         public Chatik()
         {
             messages = new List<string>();
@@ -39,6 +24,7 @@ namespace RedisBlazorApp1.Service
 
         public void Initialized()
         {
+            
             if (!inited)
             {
                 inited = true;
@@ -52,8 +38,10 @@ namespace RedisBlazorApp1.Service
                     //тут обработка сообщений, для блецзор-страницы можно 
                     // добавить событие с аргуаментом сообщением
                     messages.Add($"from channel {shannel} is message: {message}");
-                    OnNewMessage?.Invoke(this, null);
+                  
+                    Handler?.Invoke(null, null);
                 });
+              
             }
         }
 

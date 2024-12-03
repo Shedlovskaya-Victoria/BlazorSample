@@ -1,6 +1,7 @@
 ﻿@page "/chatik"
 @rendermode InteractiveServer
 @using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Mvc
 @using RedisBlazorApp1.Components
 @using StackExchange.Redis
 @inject Service.Chatik chatik;
@@ -43,29 +44,35 @@
     <InputText @bind-Value="textBox" />
 </div>
 <div>
-    <button @onclick="OnClickUpdate"> Update </button>
+   <!-- <button @onclick="(x, y) => OnClickUpdate(x, y)"> Update </button>-->
     <button @onclick="OnClickSend"> Send </button>
 </div>
 
 @code {
+
     private string textBox;
     private List<string> forecasts;
 
     protected override async Task OnInitializedAsync()
     {
         textBox = "";
-        chatik.OnNewMessage += (x, y) => OnClickUpdate();
+        // chatik.OnNewMessage += OnClickUpdate;
+        chatik.Handler += OnClickUpdate;
     }
 
-    protected void OnClickUpdate()
+    public async void OnClickUpdate(object sender, EventArgs args)
     {
-       forecasts =  chatik.GetMessages();
+        forecasts = chatik.GetMessages();
+        await InvokeAsync(StateHasChanged);
+        // OnInitializedAsync();
     }
 
     protected void OnClickSend()
     {
-        chatik.SendMessage(textBox);
-        textBox = "";
+        chatik.SendMessage($"Вика - {textBox}");
+        textBox = new("");
+        forecasts = chatik.GetMessages();
+       // OnInitializedAsync();
     }
 
 }
