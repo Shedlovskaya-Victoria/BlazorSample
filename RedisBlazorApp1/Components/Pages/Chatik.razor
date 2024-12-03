@@ -44,7 +44,6 @@
     <InputText @bind-Value="textBox" />
 </div>
 <div>
-   <!-- <button @onclick="(x, y) => OnClickUpdate(x, y)"> Update </button>-->
     <button @onclick="OnClickSend"> Send </button>
 </div>
 
@@ -56,7 +55,6 @@
     protected override async Task OnInitializedAsync()
     {
         textBox = "";
-        // chatik.OnNewMessage += OnClickUpdate;
         chatik.Handler += OnClickUpdate;
     }
 
@@ -64,7 +62,6 @@
     {
         forecasts = chatik.GetMessages();
         await InvokeAsync(StateHasChanged);
-        // OnInitializedAsync();
     }
 
     protected void OnClickSend()
@@ -72,7 +69,6 @@
         chatik.SendMessage($"Вика - {textBox}");
         textBox = new("");
         forecasts = chatik.GetMessages();
-       // OnInitializedAsync();
     }
 
 }
